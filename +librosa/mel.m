@@ -1,8 +1,8 @@
-function varargout = mel(varargin)
-% librosa.stft Design Mel filter bank
+function varargout = mel(options)
+% librosa.mel Design Mel filter bank
 %
 %  This function matches the mel function from Librosa (tested for
-%  version 0.9.2). Parameter defaults are identical to the Librosa
+%  version 0.10.1). Parameter defaults are identical to the Librosa
 %  function.
 %
 %  FB = librosa.mel(SampleRate=fs) returns a frequency-domain
@@ -22,8 +22,7 @@ function varargout = mel(varargin)
 %
 %  FB = librosa.mel(HTK=FLAG) specifies what type of Mel scaling is used.
 %  If FLAG is true, HTK scaling is used. If FLAG is false, Slaney scaling
-%  is used. This function only supports HTK scaling, which is the
-%  non-default of the Librosa function. Set HTK=true in the function call.
+%  is used. The default is Slaney-scaling.
 %
 %  FB = librosa.mel(GenerateMATLABCode=true) generates and opens an
 %  untitled file containing code that implements the code of librosa.mel
@@ -41,7 +40,7 @@ function varargout = mel(varargin)
 %
 %  % Design auditory filter bank
 %  filterBank = librosa.mel(SampleRate=fs,FFTLength=1024, ...
-%                     NumBands=16,Normalization="None", HTK=true);
+%                     NumBands=16,Normalization="None",HTK=true);
 %
 %  % Visualize filter bank
 %  plot(F,filterBank.')
@@ -52,83 +51,77 @@ function varargout = mel(varargin)
 %  % Compute mel spectrogram
 %  SMel = filterBank*S;
 
-%  Copyright 2022 The MathWorks, Inc.
+%  Copyright 2022-2023 The MathWorks, Inc.
 
 %% Parse function parameters
-p = inputParser;
+arguments
+    options.FFTLength (1,1) double {mustBeNumeric,mustBePositive,mustBeInteger} = 2048
+    options.SampleRate (1,1) double {mustBeNumeric,mustBePositive} = 22050
+    options.NumBands (1,1) double {mustBeNumeric,mustBePositive,mustBeInteger} = 128
+    options.Fmin (1,1) double {mustBeNumeric,mustBeNonnegative} = 0
+    options.Fmax (1,1) double {mustBeNumeric,mustBePositive}
+    options.HTK (1,1) logical {mustBeNumericOrLogical} = false
+    options.Normalization = 'Slaney'
+    options.GenerateMATLABCode (1,1) logical {mustBeNumericOrLogical} = false
+end
 
-validFFTLength = @(x) isnumeric(x) && isscalar(x) && (x > 0) && floor(x)==x;
-addParameter(p,'FFTLength',2048,validFFTLength);
-validSampleRate = @(x) isnumeric(x) && isscalar(x) && (x>0);
-addParameter(p,'SampleRate',22050,validSampleRate); 
-validNumBands = @(x) isnumeric(x) && isscalar(x) && (x > 0) && floor(x)==x;
-addParameter(p,'NumBands',128,validNumBands); 
-validFmin = @(x) isnumeric(x) && isscalar(x) && (x>0);
-addParameter(p,'Fmin',0,validFmin); 
-validFmax = @(x) isnumeric(x) && isscalar(x) && (x>0);
-addParameter(p,'Fmax',8000,validFmax);
-validHTK = @(x)isscalar(x) && (isnumeric(x)||islogical(x));
-addParameter(p,'HTK',false,validHTK); 
-validNorm = @(x) (isnumeric(x) && isscalar(x)) || (ismember(char(x),{'Slaney','None'}));
-addParameter(p,'Normalization','Slaney',validNorm); 
-validCodegen = @(x)isscalar(x) && (isnumeric(x)||islogical(x));
-addParameter(p,'GenerateMATLABCode',false,validCodegen); 
-
-parse(p,varargin{:});
-
-if ismember('Fmax',p.UsingDefaults)
-    fmax = p.Results.SampleRate/2;
+if ~isfield(options,'Fmax')
+    options.Fmax = options.SampleRate/2;
 else
-    fmax = min(p.Results.SampleRate/2,p.Results.Fmax);
+    options.Fmax = min(options.SampleRate/2,options.Fmax);
 end
 
-if ~p.Results.HTK
-    error('Slaney scaling is not supported. Set HTK to true.');
-end
-
-norm = p.Results.Normalization;
-customNorm = false;
-switch norm
+switch options.Normalization
     case 'None'
-        norm = 'none';
+        options.Normalization = 'none';
+        customNorm = false;
     case 'Slaney'
-        norm = 'bandwidth';
+        options.Normalization = 'bandwidth';
+        customNorm = false;
     otherwise
-        norm = 'none';
+        options.Normalization = 'none';
         customNorm = true;
+        mustBeNumeric(options.Normalization)
+end
+if options.HTK
+    melStyle = "oshaughnessy";
+else
+    melStyle = "slaney";
 end
 
-if p.Results.GenerateMATLABCode
+if options.GenerateMATLABCode
     strWriter = StringWriter;
 else
     strWriter = librosa.utils.StringWriter;
 end
 strWriter.addcr('%s\n%% Construct filter bank.','%%');
 
-filterBank = designAuditoryFilterBank(p.Results.SampleRate,...
-                                      "FrequencyScale","mel",...
-                                      "FFTLength",p.Results.FFTLength,...
-                                      "NumBands",p.Results.NumBands,...
-                                      "FrequencyRange",[p.Results.Fmin fmax],...
-                                      "Normalization",norm,...
-                                      "OneSided",true,...
-                                      "FilterBankDesignDomain","linear");
+filterBank = designAuditoryFilterBank(options.SampleRate, ...
+    FrequencyScale="mel", ...
+    FFTLength=options.FFTLength, ...
+    NumBands=options.NumBands, ...
+    FrequencyRange=[options.Fmin options.Fmax], ...
+    Normalization=options.Normalization, ...
+    OneSided=true, ...
+    FilterBankDesignDomain="linear", ...
+    MelStyle=melStyle);
 
-strWriter.addcr('filterBank = designAuditoryFilterBank(%f,...',p.Results.SampleRate);
+strWriter.addcr('filterBank = designAuditoryFilterBank(%f,...',options.SampleRate);
 strWriter.addcr('FrequencyScale="mel",...');
-strWriter.addcr('FFTLength=%d,...',p.Results.FFTLength);
-strWriter.addcr('NumBands=%d,...',p.Results.NumBands);
-strWriter.addcr('FrequencyRange=[%f %f],...',p.Results.Fmin,fmax);
-strWriter.addcr('Normalization=''%s'',...',norm);
+strWriter.addcr('FFTLength=%d,...',options.FFTLength);
+strWriter.addcr('NumBands=%d,...',options.NumBands);
+strWriter.addcr('FrequencyRange=[%f %f],...',options.Fmin,options.Fmax);
+strWriter.addcr('Normalization=''%s'',...',options.Normalization);
 strWriter.addcr('OneSided=true,...');
+strWriter.addcr('MelStyle=''%s'',...',melStyle);
 strWriter.addcr('FilterBankDesignDomain="linear");');
 
 if customNorm
-    n = p.Results.Normalization;
+    n = options.Normalization;
     strWriter.addcr('%s\n%% Normalize filter bank.','%%');
     if ~isequal(n,-Inf)
         val = vecnorm(filterBank,n,2);
-        strWriter.addcr('n = vecnorm(filterBank,%f,2);',p.Results.Normalization);
+        strWriter.addcr('n = vecnorm(filterBank,%f,2);',options.Normalization);
         filterBank = filterBank./val;
         strWriter.addcr('filterBank = filterBank./n;');
     end
@@ -137,8 +130,8 @@ end
 varargout{1} = filterBank;
 varargout{2} = strWriter.char;
 
-if p.Results.GenerateMATLABCode
-    footer = sprintf('%% _Generated by MATLAB (R) and Audio Toolbox on %s_', string(datetime("now")));
+if options.GenerateMATLABCode
+    footer = sprintf('%% _Generated by MATLAB (R) and Audio Toolbox on %s_',string(datetime("now")));
     strWriter.addcr('\n%s\n%s','%%',footer);
     matlab.internal.liveeditor.openAsLiveCode(strWriter.char)
 end
