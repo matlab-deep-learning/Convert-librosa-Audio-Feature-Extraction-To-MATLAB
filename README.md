@@ -26,13 +26,13 @@ For a MATLAB version of this example, refer to [convertLibrosaToMATLABCode.m](co
 
 ## Requirements
 
-- [MATLAB®](https://www.mathworks.com/) R2021b or later
+- [MATLAB®](https://www.mathworks.com/) R2023b or later
 - [Deep Learning Toolbox™](https://www.mathworks.com/products/deep-learning.html)
 - [Audio Toolbox™](https://www.mathworks.com/products/audio.html)
 
 The Python code uses the following packages:
-- librosa version 0.9.2
-- PyTorch version 1.10.2
+- librosa version 0.10.1
+- PyTorch version 2.1.0
 
 
 ## Mapping librosa Code to MATLAB Code
