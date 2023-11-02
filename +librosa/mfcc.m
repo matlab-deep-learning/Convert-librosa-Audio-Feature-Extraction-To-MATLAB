@@ -2,7 +2,7 @@ function varargout = mfcc(y,varargin)
 % librosa.mfcc Compute mel-frequency cepstral coefficients
 %
 %  This function matches the mfcc function from Librosa (tested for
-%  version 0.9.2). Parameter defaults are identical to the Librosa
+%  version 0.10.1). Parameter defaults are identical to the Librosa
 %  function.
 %
 %  Coeffs = librosa.mfcc(audioIn) returns the mel-frequency cepstral
@@ -39,9 +39,7 @@ function varargout = mfcc(y,varargin)
 %
 %  Coeffs = librosa.mfcc(audioIn, HTK=FLAG) specifies what type of Mel
 %  scaling is used. If FLAG is true, HTK scaling is used. If FLAG is false,
-%  Slaney scaling is used. This function only supports HTK scaling, which
-%  is the non-default of the Librosa function. Set HTK=true in the function
-%  call.
+%  Slaney scaling is used.
 %
 %  Coeffs = librosa.mfcc(audioIn, Spectrum=S) specifies the pre-computed
 %  spectrogram. If Spectrum is specified, audioIn is ignored, and the
@@ -65,7 +63,7 @@ function varargout = mfcc(y,varargin)
 %  audioread("Counting-16-44p1-mono-15secs.wav"); 
 %  Coeffs = librosa.mfcc(audioIn,SampleRate=fs, HTK=true);
 
-%  Copyright 2022 The MathWorks, Inc.
+%  Copyright 2022-2023 The MathWorks, Inc.
 
 p = inputParser;
 addRequired(p,'y');
