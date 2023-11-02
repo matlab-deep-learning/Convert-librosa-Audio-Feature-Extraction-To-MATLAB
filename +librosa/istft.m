@@ -8,41 +8,41 @@ function varargout = istft(Y,varargin)
 %  X = librosa.istft(Y) returns the inverse short-time Fourier transform
 %  (istft) of Y.
 %
-%  X = librosa.istft(S, FFTLength=NFFT) specifies the FFT length used to
+%  X = librosa.istft(S,FFTLength=NFFT) specifies the FFT length used to
 %  calculate the stft.
 %
-%  X = librosa.istft(S, Window=win) specifies the window used to compute
+%  X = librosa.istft(S,Window=win) specifies the window used to compute
 %  the stft. 
 %
-%  X = librosa.istft(S, HopLength=H) specifies the hop length.
+%  X = librosa.istft(S,HopLength=H) specifies the hop length.
 %
-%  X = librosa.istft(S, Center=center) specifies if the signal was
+%  X = librosa.istft(S,Center=center) specifies if the signal was
 %  centered.
 %
-%  S = librosa.istft(X, GenerateMATLABCode=true) generates and opens an
+%  S = librosa.istft(X,GenerateMATLABCode=true) generates and opens an
 %  untitled file containing code that implements the code of librosa.istft
 %  using the MATLAB function istft.
 %
 % % EXAMPLE:
 % % Compute the istft of a real signal using the overlap-add method.
-% fs = 10240;
-% t = 0:1/fs:0.5-1/fs;
-% x = 5*sin(2*pi*t*10);
-% win = hamming(512,'periodic');
-% S = librosa.stft(x,'Window',win,'HopLength',numel(win)-384,...
-%                  'FFTLength',1024);
-% X = librosa.istft(S,'Window',win,'HopLength',numel(win)-384,...
-%    'FFTLength',1024);
+%   fs = 10240;
+%   t = 0:1/fs:0.5-1/fs;
+%   x = 5*sin(2*pi*t*10);
+%   win = hamming(512,'periodic');
+%   S = librosa.stft(x,'Window',win,'HopLength',numel(win)-384,...
+%                   'FFTLength',1024);
+%   X = librosa.istft(S,'Window',win,'HopLength',numel(win)-384,...
+%                   'FFTLength',1024);
 % 
 % % Plot original and resynthesized signals.
-% plot(1:numel(x),x,1:size(X,1),X,'-.')
-% axis tight
-% xlabel('Time bins')
-% ylabel('Amplitude (V)')
-% title('Original and Reconstructed Signal')
-% legend('Original','Reconstructed')
+%   plot(1:numel(x),x,1:size(X,1),X,'-.')
+%   axis tight
+%   xlabel('Time bins')
+%   ylabel('Amplitude (V)')
+%   title('Original and Reconstructed Signal')
+%   legend('Original','Reconstructed')
 
-%  Copyright 2022 The MathWorks, Inc.
+%  Copyright 2022-2023 The MathWorks, Inc.
 
 %% Validate input signal
 validateattributes(Y,{'single','double'},...
