@@ -2,7 +2,7 @@ function varargout = stft(X,varargin)
 % librosa.stft Short-time Fourier transform.
 %
 %  This function matches the stft function from Librosa (tested for
-%  version 0.9.2). Parameter defaults are identical to the Librosa
+%  version 0.10.1). Parameter defaults are identical to the Librosa
 %  function.
 %
 %  S = librosa.stft(X) returns the short-time Fourier transform (stft) of
@@ -36,7 +36,7 @@ function varargout = stft(X,varargin)
 % x = chirp(t,250,1,500,'q');
 % librosa.stft(x)
 
-%  Copyright 2022 The MathWorks, Inc.
+%  Copyright 2022-2023 The MathWorks, Inc.
 
 %% Validate input signal
 validateattributes(X,{'single','double'},...
