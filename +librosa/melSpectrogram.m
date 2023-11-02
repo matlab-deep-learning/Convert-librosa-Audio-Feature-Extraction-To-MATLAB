@@ -2,54 +2,52 @@ function varargout = melSpectrogram(y,varargin)
 % librosa.melSpectrogram Compute mel spectrogram
 %
 %  This function matches the melSpectrogram function from Librosa (tested
-%  for version 0.9.2). Parameter defaults are identical to the Librosa
+%  for version 0.10.1). Parameter defaults are identical to the Librosa
 %  function.
 %
 %  S = librosa.melSpectrogram(audioIn) returns the mel spectrogram of
 %  audioIn.
 %
-%  S = librosa.melSpectrogram(audioIn, FFTLength=NFFT) specifies the FFT
+%  S = librosa.melSpectrogram(audioIn,FFTLength=NFFT) specifies the FFT
 %  length.
 %
-%  S = librosa.melSpectrogram(audioIn, Window=win) specifies the window
+%  S = librosa.melSpectrogram(audioIn,Window=win) specifies the window
 %  used to compute the stft.
 %
-%  S = librosa.melSpectrogram(audioIn, HopLength=H) specifies the hop
+%  S = librosa.melSpectrogram(audioIn,HopLength=H) specifies the hop
 %  length.
 %
-%  S = librosa.melSpectrogram(audioIn, Center=center) specifies if the
+%  S = librosa.melSpectrogram(audioIn,Center=center) specifies if the
 %  signal is centered. If center is true, audioIn is padded as documented
 %  by the stft function in the Librosa package.
 %
-%  S = librosa.melSpectrogram(audioIn, PaddingMode=mode) defines the
+%  S = librosa.melSpectrogram(audioIn,PaddingMode=mode) defines the
 %  padding mode of the signal. Padding applies when Center is true.
 %
-%  S = librosa.melSpectrogram(audioIn, NumBands=NUMBANDS) specifies the
+%  S = librosa.melSpectrogram(audioIn,NumBands=NUMBANDS) specifies the
 %  number of bands in the filter bank.
 %
-%  S = librosa.melSpectrogram(audioIn, Fmin=FMIN) specifies the lowest
+%  S = librosa.melSpectrogram(audioIn,Fmin=FMIN) specifies the lowest
 %  filter bank frequency (in Hz).
 % 
-%  S = librosa.melSpectrogram(audioIn, Fmax=FMAX) specifies the highest
+%  S = librosa.melSpectrogram(audioIn,Fmax=FMAX) specifies the highest
 %  filter bank frequency (in Hz).
 % 
-%  S = librosa.melSpectrogram(audioIn, Normalization=NORM) specifies the
+%  S = librosa.melSpectrogram(audioIn,Normalization=NORM) specifies the
 %  type of filter bank normalization.
 %
-%  S = librosa.melSpectrogram(audioIn, Power=P) specifies the exponent for
+%  S = librosa.melSpectrogram(audioIn,Power=P) specifies the exponent for
 %  the magnitude melspectrogram.
 %
-%  S = librosa.melSpectrogram(audioIn, HTK=FLAG) specifies what type of
+%  S = librosa.melSpectrogram(audioIn,HTK=FLAG) specifies what type of
 %  Mel scaling is used. If FLAG is true, HTK scaling is used. If FLAG is
-%  false, Slaney scaling is used. This function only supports HTK scaling,
-%  which is the non-default of the Librosa function. Set HTK=true in the
-%  function call.
+%  false, Slaney scaling is used.
 %
-%  S = librosa.melSpectrogram(audioIn, Spectrum=S) specifies the
+%  S = librosa.melSpectrogram(audioIn,Spectrum=S) specifies the
 %  pre-computed spectrogram. If Spectrum is specified, audioIn is ignored,
 %  and the spectrogram computation is bypassed.
 %
-%  S = librosa.melSpectrogram(audioIn, GenerateMATLABCode=true) generates
+%  S = librosa.melSpectrogram(audioIn,GenerateMATLABCode=true) generates
 %  and opens an untitled file containing code that implements the code of
 %  librosa.melSpectrogram using the MATLAB functions stft and
 %  designAuditoryFilterBank.
@@ -59,7 +57,7 @@ function varargout = melSpectrogram(y,varargin)
 %  [audioIn,fs] = audioread("Counting-16-44p1-mono-15secs.wav");
 %  S = librosa.melSpectrogram(audioIn,SampleRate=fs, HTK=true);
 
-%  Copyright 2022 The MathWorks, Inc.
+%  Copyright 2022-2023 The MathWorks, Inc.
 
 %% Parse function parameters
 p = inputParser;
